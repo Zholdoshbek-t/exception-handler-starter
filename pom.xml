@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.inovexx</groupId>
 	<artifactId>exception-handler-starter</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>exception-handler-starter</name>
 	<description>Exception Handler Starter for Spring Boot</description>
 	<properties>

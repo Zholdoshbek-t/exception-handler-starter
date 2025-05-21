@@ -1,7 +1,6 @@
 package dev.inovexx.exception_handler.handlers;
 
-import dev.inovexx.exception_handler.models.BaseException;
-import dev.inovexx.exception_handler.models.BaseLogException;
+import dev.inovexx.exception_handler.models.ServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,8 @@ public class ExceptionHandlerAdvice {
      * @param e Возникшее исключение.
      * @return ResponseEntity с ApiResponse, содержащим сообщение об ошибке и HTTP статус 500.
      */
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ApiResponse> handleThrowable(Throwable e) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException e) {
         Throwable targetException = e.getMessage() == null && e.getCause() != null ? e.getCause() : e;
         log.error(e.getMessage(), targetException);
         String message = (e.getMessage() == null || e.getMessage().isEmpty()) ? "Неизвестная ошибка" : e.getMessage();
@@ -34,26 +33,14 @@ public class ExceptionHandlerAdvice {
     }
 
     /**
-     * Обрабатывает исключения типа BaseException.
-     * Возвращает ответ с сообщением об ошибке и HTTP статусом, определенным в исключении.
-     *
-     * @param e Возникшее исключение BaseException.
-     * @return ResponseEntity с ApiResponse, содержащим сообщение об ошибке и HTTP статус из исключения.
-     */
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiResponse> handleThrowable(BaseException e) {
-        return buildResponse(e);
-    }
-
-    /**
-     * Обрабатывает исключения типа BaseLogException.
+     * Обрабатывает исключения типа ServerException.
      * Записывает сообщение для логирования из исключения и возвращает ответ, используя buildResponse.
      *
-     * @param e Возникшее исключение BaseLogException.
+     * @param e Возникшее исключение ServerException.
      * @return ResponseEntity с ApiResponse, содержащим сообщение об ошибке и HTTP статус из исключения.
      */
-    @ExceptionHandler(BaseLogException.class)
-    public ResponseEntity<ApiResponse> handleThrowable(BaseLogException e) {
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<ApiResponse> handleThrowable(ServerException e) {
         log.error(e.getLog());
         return buildResponse(e);
     }
@@ -61,10 +48,10 @@ public class ExceptionHandlerAdvice {
     /**
      * Вспомогательный метод для построения ResponseEntity на основе BaseException.
      *
-     * @param e Исключение BaseException, содержащее сообщение и HTTP статус.
+     * @param e Исключение ServerException, содержащее сообщение и HTTP статус.
      * @return ResponseEntity с ApiResponse и HTTP статусом из исключения.
      */
-    private ResponseEntity<ApiResponse> buildResponse(BaseException e) {
+    private ResponseEntity<ApiResponse> buildResponse(ServerException e) {
         return new ResponseEntity<>(new ApiResponse(e.getMessage()), e.getStatus());
     }
 
